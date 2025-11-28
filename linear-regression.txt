@@ -1,0 +1,78 @@
+import numpy as np
+
+
+# model used for low-dim linear regression; one feature vs target
+class LinearRegression:
+    # descri: constructor; establishes slope, intercept and descent path
+    # params: none
+    def __init__(self):
+        self._coef = 0
+        self._intercept = 0
+        self._path = np.array([])
+
+        
+    # descri: determines cost of modeling data with various lines
+    # params: array of slopes and intercepts; x and y coordinates of data
+    # return: array of square error values; one for each (m, b)
+    def sqError(self, m_arr, b_arr, x, y):
+        
+        # reshape m_arr and b_arr to column vectors (k, 1)
+        m_col = m_arr.reshape(-1, 1)
+        b_col = b_arr.reshape(-1, 1) 
+        
+        # Reshape x to a row vector (1, n)
+        x_row = x.reshape(1, -1) 
+        
+        # Calculate all predicted y-values (y_hat) for all candidate lines
+        y_hat = m_col * x_row + b_col
+        
+        # Reshape y to a row vector (1, n)
+        y_row = y.reshape(1, -1)
+        
+        # Calculate the error (True y - Predicted y)
+        errors = y_row - y_hat       
+        
+        # Square the errors and sum them up for each candidate line
+        sq_errors = np.sum(errors**2, axis=1) 
+        
+        return sq_errors
+
+    
+    # descri: fits linear regression through sampling descent
+    # params: feature x, target y, number of iterations during descent
+    #         learning rate, and number of samples taken in each step
+    # return: none
+    def fit(self, x, y, iters = 100, rate = 0.1, samples = 100):
+        # begin new descent path through parameter (m, b)-space
+        self._path = [[self._coef, self._intercept]]
+
+        # descent loop
+        for iter in range(iters):
+            # randomly generate pts in square for parameter space search
+            m_delta = rate * (np.random.random(samples) - 0.5)
+            b_delta = rate * (np.random.random(samples) - 0.5)
+
+            # generate candidate (m,b)
+            m_candidates = self._coef + m_delta
+            b_candidates = self._intercept + b_delta
+
+            # compute squared error for each candidate
+            errors = self.sqError(m_candidates, b_candidates, x, y)
+
+            # choose the best one (smallest error)
+            best_idx = np.argmin(errors)
+
+            # update model parameters
+            self._coef = m_candidates[best_idx]
+            self._intercept = b_candidates[best_idx]
+
+            # record path
+            self._path.append([self._coef, self._intercept])
+            
+        # Convert the path list into a NumPy array
+        self._path = np.array(self._path)
+        
+    # Uses the final learned line to estimate y-values for new x-values
+    def predict(self, x):
+        return self._coef * x + self._intercept
+   
