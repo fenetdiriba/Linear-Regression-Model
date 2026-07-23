@@ -1,8 +1,6 @@
 import numpy as np
 import streamlit as st
-from LinearRegression import (
-    LinearRegression,
-)  # Import your custom class from your repository
+from LinearRegression import LinearRegression
 
 st.title("Linear Regression Model from Scratch")
 st.write(
@@ -29,10 +27,13 @@ st.write(f"Dataset shape: X={X.shape}, y={y.shape}")
 
 # Train button
 if st.button("Train Model"):
-  # Initialize and fit your custom model
-  model = LinearRegression(lr=learning_rate, n_iters=iterations)
-  model.fit(X, y)
+  # Initialize the model without arguments, then pass parameters to fit()
+  model = LinearRegression()
+  model.fit(X, y, iters=iterations, rate=learning_rate)
 
+  st.success("Model trained successfully!")
+  st.write(f"Optimized Weight (Coefficient): {model._coef}")
+  st.write(f"Optimized Bias (Intercept): {model._intercept}")
   st.success("Model trained successfully!")
   st.write(f"Optimized Weights: {model.weights}")
   st.write(f"Optimized Bias: {model.bias}")
