@@ -34,6 +34,3 @@ if st.button("Train Model"):
   st.success("Model trained successfully!")
   st.write(f"Optimized Weight (Coefficient): {model._coef}")
   st.write(f"Optimized Bias (Intercept): {model._intercept}")
-  st.success("Model trained successfully!")
-  st.write(f"Optimized Weights: {model.weights}")
-  st.write(f"Optimized Bias: {model.bias}")
